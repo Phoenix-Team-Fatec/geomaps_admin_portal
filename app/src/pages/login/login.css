@@ -1,0 +1,132 @@
+body{
+    background-color: #fffafb;
+}
+
+
+.main-content{
+    margin: auto;
+    width: 50%;
+    margin-top: 8%;
+    height: 540px;
+    box-shadow: 0 0 10px rgba(0,0,0, .2);
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+    flex-direction: column; 
+    background-color: white;
+    gap: 5%;
+}
+
+
+
+
+
+.form{
+    width: 50%;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15%;
+}
+
+
+.form input {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Placeholder estilizado */
+.form input::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}
+
+/* Efeitos de foco/hover */
+.form input:hover {
+  border-color: #cbd5e1;
+}
+
+.form input:focus {
+  outline: none;
+  border-color: #7de2d1;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Validação visual */
+.form input:invalid:not(:placeholder-shown) {
+  border-color: #ef4444;
+}
+
+.form input:valid:not(:placeholder-shown) {
+  border-color: #10b981;
+}
+
+/* Animações extras (opcional) */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-3px); }
+  100% { transform: translateY(0px); }
+}
+
+
+
+.btn {
+  position: relative; 
+  width: 180px;
+  height: 60px;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid #7de2d1;
+  border-radius: 5px;
+  outline: none;
+  transition: 1s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  fill: none;
+  stroke: white;
+  stroke-dasharray: 150 480;
+  stroke-dashoffset: 150;
+  transition: 1s ease-in-out;
+}
+
+.btn:hover {
+  transition: 1s ease-in-out;
+  background: #7de2d1;
+}
+
+.btn:hover svg {
+  stroke-dashoffset: -480;
+}
+
+.btn span {
+  color: black;
+  font-size: 18px;
+  font-weight: 100;
+}
+
+
+.btn:hover span {
+  color: white;
+}
+
+.btn-reset-pass{
+    background-color: transparent;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 15px;
+}
