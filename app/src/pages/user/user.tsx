@@ -18,6 +18,8 @@ const UserPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState('');
 
 
 const fetch_users = async () => {
@@ -43,6 +45,17 @@ const fetch_users = async () => {
 
     fetchData();
   }, []);
+
+
+  const send_reset_password_email = async (user_email: string) => {
+    try{
+      await api.post("/auth/password/forgot", {email: user_email});
+      setResetEmailSent(user_email);
+      setShowModal(true);
+    }catch(error){
+      console.log(`Erro ao enviar email de redefinição de senha: ${error}`);
+    }
+  }
 
   
 
@@ -143,12 +156,21 @@ const fetch_users = async () => {
                           </span>
                         </td>
                         <td className="actions-cell">
-                          <button
-                            onClick={() => toggleUserStatus(user.id)}
-                            className={`action-btn ${user.is_blocked ? 'unblock-btn' : 'block-btn'}`}
-                          >
-                            {user.is_blocked ? 'Desbloquear' : 'Bloquear'}
-                          </button>
+                          <div className="actions-container">
+                            <button
+                              onClick={() => toggleUserStatus(user.id)}
+                              className={`action-btn ${user.is_blocked ? 'unblock-btn' : 'block-btn'}`}
+                            >
+                              {user.is_blocked ? 'Desbloquear' : 'Bloquear'}
+                            </button>
+                            <button
+                              onClick={() => send_reset_password_email(user.email)}
+                              className="action-btn reset-btn"
+                              title="Enviar email de redefinição de senha"
+                            >
+                              Redefinir Senha
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -165,6 +187,55 @@ const fetch_users = async () => {
           )}
         </div>
       </div>
+
+      {/* Reset Password Modal */}
+      {showModal && (
+        <div className="modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="modal-title">Email Enviado</h3>
+              <button 
+                className="modal-close" 
+                onClick={() => setShowModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="modal-icon">
+                <svg 
+                  className="check-icon" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M5 13l4 4L19 7" 
+                  />
+                </svg>
+              </div>
+              <p className="modal-message">
+                O código para redefinição de senha foi enviado para:
+              </p>
+              <p className="modal-email">{resetEmailSent}</p>
+              <p className="modal-instructions">
+                O usuário deve verificar sua caixa de entrada e seguir as instruções no email.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="modal-confirm-btn" 
+                onClick={() => setShowModal(false)}
+              >
+                Entendido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

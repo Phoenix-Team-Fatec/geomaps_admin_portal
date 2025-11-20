@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useMemo} from 'react';
 import Sidebar from '../../components/sidebar';
 import './ocorrencia.css';
 import api from '../../services/api';
@@ -21,16 +21,62 @@ const OcorrenciaPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterGravidade, setFilterGravidade] = useState<string>('');
+  const [filterStatus, setFilterStatus] = useState<string>('');
 
   
   const fetch_ocorrencias = async () => {
     try{
-      const response = await api.get('/ocorrencia/listar');
+      const response = await api.get('/ocorrencia/listar_todas');
       return response.data
     }catch(error){
       console.log(`Erro ao buscar ocorrências: ${error}`);
     }
   }
+
+  // Helper functions defined first
+  const formatDateTime = (dateString: string) => {
+    // Handle the DD/MM/YYYY HH:MM format
+    if (dateString && dateString.includes('/')) {
+      const [datePart, timePart] = dateString.split(' ');
+      if (datePart && timePart) {
+        const [day, month, year] = datePart.split('/');
+        // Create ISO format: YYYY-MM-DDTHH:MM
+        const isoString = `${year}-${month}-${day}T${timePart}:00`;
+        const date = new Date(isoString);
+        
+        if (!isNaN(date.getTime())) {
+          return date.toLocaleString('pt-BR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        }
+      }
+    }
+    
+    // Fallback: return original string if parsing fails
+    return dateString;
+  };
+
+  const isExpired = (expiraEm: string) => {
+    if (expiraEm && expiraEm.includes('/')) {
+      const [datePart, timePart] = expiraEm.split(' ');
+      if (datePart && timePart) {
+        const [day, month, year] = datePart.split('/');
+        const isoString = `${year}-${month}-${day}T${timePart}:00`;
+        const date = new Date(isoString);
+        
+        if (!isNaN(date.getTime())) {
+          return date < new Date();
+        }
+      }
+    }
+    
+    // Fallback for other date formats
+    return new Date(expiraEm) < new Date();
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,25 +91,18 @@ const OcorrenciaPage: React.FC = () => {
     fetchData();
   }, []);
 
-  const filteredOcorrencias = ocorrencias.filter(ocorrencia => {
-    const matchesSearch = ocorrencia.tipo.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesGravidade = filterGravidade === '' || ocorrencia.gravidade === filterGravidade;
-    return matchesSearch && matchesGravidade;
-  });
-
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString('pt-BR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
+  // Use useMemo for filtered occurrences to avoid re-calculation on every render
+  const filteredOcorrencias = useMemo(() => {
+    return ocorrencias.filter(ocorrencia => {
+      const matchesSearch = ocorrencia.tipo.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesGravidade = filterGravidade === '' || ocorrencia.gravidade === filterGravidade;
+      const expired = isExpired(ocorrencia.expira_em);
+      const matchesStatus = filterStatus === '' || 
+        (filterStatus === 'ativa' && !expired) || 
+        (filterStatus === 'expirada' && expired);
+      return matchesSearch && matchesGravidade && matchesStatus;
     });
-  };
-
-  const isExpired = (expiraEm: string) => {
-    return new Date(expiraEm) < new Date();
-  };
+  }, [ocorrencias, searchTerm, filterGravidade, filterStatus]);
 
   const getGravidadeClass = (gravidade: string) => {
     switch (gravidade) {
@@ -96,17 +135,31 @@ const OcorrenciaPage: React.FC = () => {
               />
             </div>
             
-            <div className="filter-container">
-              <select
-                value={filterGravidade}
-                onChange={(e) => setFilterGravidade(e.target.value)}
-                className="filter-select"
-              >
-                <option value="">Todas as Gravidades</option>
-                <option value="leve">Leve</option>
-                <option value="moderada">Moderada</option>
-                <option value="intensa">Intensa</option>
-              </select>
+            <div className="filters-group">
+              <div className="filter-container">
+                <select
+                  value={filterGravidade}
+                  onChange={(e) => setFilterGravidade(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="">Todas as Gravidades</option>
+                  <option value="leve">Leve</option>
+                  <option value="moderada">Moderada</option>
+                  <option value="intensa">Intensa</option>
+                </select>
+              </div>
+              
+              <div className="filter-container">
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="">Todos os Status</option>
+                  <option value="ativa">Ativa</option>
+                  <option value="expirada">Expirada</option>
+                </select>
+              </div>
             </div>
             
             <div className="table-info">
