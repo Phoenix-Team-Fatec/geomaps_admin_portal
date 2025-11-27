@@ -70,7 +70,7 @@ const fetch_users = async () => {
     return new Date(dateString).toLocaleDateString('pt-BR');
   };
 
-  const block_user = async (user_cpf:String, is_blocked:boolean) => {
+  const block_user = async (user_cpf:string, is_blocked:boolean) => {
     try{
       await api.post(`/admin/block_user?user_cpf=${user_cpf}&is_blocked=${is_blocked}`);
     }catch(error){

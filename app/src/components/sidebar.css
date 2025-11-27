@@ -11,6 +11,7 @@
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   z-index: 1000;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
 .sidebar-header {
@@ -47,6 +48,7 @@
 .sidebar-link {
   display: flex;
   align-items: center;
+  gap: 0.875rem;
   padding: 0.875rem 1.5rem;
   color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
@@ -78,6 +80,14 @@
   height: 70%;
   background: white;
   border-radius: 0 4px 4px 0;
+}
+
+.sidebar-icon {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
 }
 
 .sidebar-label {
@@ -163,4 +173,88 @@
 .sidebar-link:focus {
   outline: 2px solid rgba(255, 255, 255, 0.5);
   outline-offset: -2px;
+}
+
+/* Sidebar Footer with Logout Button */
+.sidebar-footer {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.logout-icon {
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+}
+
+.logout-btn:hover .logout-icon {
+  transform: translateX(-3px);
+}
+
+.logout-label {
+  font-size: 0.95rem;
+}
+
+/* Focus state for logout button */
+.logout-btn:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* Responsive adjustments for logout button */
+@media (max-width: 768px) {
+  .sidebar-footer {
+    padding: 1rem;
+  }
+
+  .logout-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logout-btn {
+    gap: 0.5rem;
+  }
+
+  .logout-icon {
+    font-size: 1rem;
+  }
+
+  .logout-label {
+    font-size: 0.9rem;
+  }
 }
