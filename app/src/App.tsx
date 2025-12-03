@@ -1,4 +1,3 @@
-import './App.css'
 import { Routes, Route } from 'react-router'
 import UserPage from './pages/user/user'
 import OcorrenciaPage from './pages/ocorrencia/ocorrencia'
